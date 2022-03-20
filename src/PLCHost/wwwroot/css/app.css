@@ -16,3 +16,8 @@
   right: 0.75rem;
   top: 0.5rem;
 }
+
+.grid-center-items {
+    display: grid;
+    place-items: center;
+}
