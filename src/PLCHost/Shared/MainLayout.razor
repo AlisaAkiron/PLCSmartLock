@@ -1,11 +1,45 @@
 ﻿@inherits LayoutComponentBase
 
 <MApp>
+    <MAppBar
+        App
+        Color="#6A76AB"
+        Dark>
+
+        <!-- 顶部选单 -->
+        <ChildContent>
+            <MAppBarNavIcon></MAppBarNavIcon>
+            <MAppBarTitle>PLC Smart Lock Dashboard</MAppBarTitle>
+        </ChildContent>
+
+        <ExtensionContent>
+            <MTabs
+                SliderColor="white"
+                AlignWithTitle>
+
+                @foreach (var (k, v) in items)
+                {
+                    <MTab Href="@v">@k</MTab>
+                }
+
+            </MTabs>
+        </ExtensionContent>
+
+    </MAppBar>
+
     <MMain>
-        <MContainer Fluid>
-            <CascadingValue Value="this">
-                @Body
-            </CascadingValue>
+        <MContainer Style="min-height=100%">
+            @Body
         </MContainer>
     </MMain>
 </MApp>
+
+@code {
+    Dictionary<string, string> items = new()
+    {
+        { "主页", "/" },
+        { "PLC", "/plc" },
+        { "配置", "/config" },
+        { "监控", "/monitor" }
+    };
+}
