@@ -17,7 +17,7 @@
                 SliderColor="white"
                 AlignWithTitle>
 
-                @foreach (var (k, v) in items)
+                @foreach (var (k, v) in _items)
                 {
                     <MTab Href="@v">@k</MTab>
                 }
@@ -28,7 +28,7 @@
     </MAppBar>
 
     <MMain>
-        <MContainer Style="min-height=100%">
+        <MContainer Style="min-height: 100%">
             @Body
         </MContainer>
     </MMain>
@@ -41,11 +41,13 @@
 </MApp>
 
 @code {
-    Dictionary<string, string> items = new()
+
+    readonly Dictionary<string, string> _items = new()
     {
         { "主页", "/" },
         { "PLC", "/plc" },
         { "配置", "/config" },
         { "监控", "/monitor" }
     };
+
 }

@@ -26,8 +26,8 @@ if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development
 
 configurationBuilder.AddInMemoryCollection(new List<KeyValuePair<string, string>>
 {
-    new("AssemblyPath", (string)assemblyPath),
-    new ("DataDirectory", (string)dataDirectory)
+    new("AssemblyPath", assemblyPath),
+    new ("DataDirectory", dataDirectory)
 });
 
 configurationBuilder.AddEnvironmentVariables("PLC:");
@@ -85,7 +85,7 @@ var dbFile = Path.Combine(configuration.GetValue<string>("DataDirectory"), "data
 if (File.Exists(dbFile) is false)
 {
     using var scope = app.Services.CreateScope();
-    await using var db = scope?.ServiceProvider.GetService<PlcHostDbContext>();
+    await using var db = scope.ServiceProvider.GetService<PlcHostDbContext>();
 
     if (db is null)
     {
@@ -94,7 +94,7 @@ if (File.Exists(dbFile) is false)
     }
 
     db.Database.Migrate();
-    await db!.DisposeAsync();
+    await db.DisposeAsync();
 }
 
 #endregion
