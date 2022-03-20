@@ -1,5 +1,59 @@
-@page "/plc"
+﻿@page "/plc"
 
 <PageTitle>PLC Smart Lock | PLC</PageTitle>
 
-<h1>Placeholder PLC</h1>
+<div class="grid-center-items">
+    
+    <div class="grid-center-items">
+        <h2>PLC 信息</h2>
+    </div>
+
+    <MDivider></MDivider>
+
+    <MContainer Fluid>
+
+        @foreach (var ci in _columeInfos)
+        {
+            <MRow>
+                <MCol Class="d-none d-sm-block" Cols="2"></MCol>
+                <MCol Class="d-small-none" Cols="1"></MCol>
+                <MCol Class="align-middle-items">
+                    <MLabel>
+                        <h3>@ci.Label</h3>
+                    </MLabel>
+                </MCol>
+                <MCol Class="align-middle-items">
+                    <MTextField Disabled
+                                Label="@ci.TextLabel"
+                                Value="@ci.Value"></MTextField>
+                </MCol>
+                <MCol Class="d-none d-sm-block" Cols="2"></MCol>
+                <MCol Class="d-small-none" Cols="1"></MCol>
+            </MRow>
+        }
+
+    </MContainer>
+
+</div>
+
+@code {
+    public record ColumeInfo(string Label, string TextLabel, string Value);
+
+    private bool _plcConnectionStatus = false;
+    private PlcInfo _plcInfo = new()
+            {
+                Ip = "10.110.1.1",
+                CpuType = S7.Net.CpuType.S71200.ToFormattedString(),
+                Rack = 0,
+                Slot = 1
+            };
+
+    public List<ColumeInfo> _columeInfos { get { return new()
+            {
+                new("PLC 连接状态", "PLC STATUS", _plcConnectionStatus ? "True" : "False"),
+                new("PLC IP 地址", "PLC IP", _plcInfo.Ip),
+                new("PLC CPU 类型", "PLC CPU TYPE", _plcInfo.CpuType),
+                new("PLC 机柜编号", "PLC RACK", _plcInfo.Rack.ToString()),
+                new("PLC 插槽编号", "PLC SLOT", _plcInfo.Slot.ToString())
+            }; } }
+}
