@@ -14,22 +14,11 @@
 
         @foreach (var (label, textLabel, value) in ColumnInfos)
         {
-            <MRow>
-                <MCol Class="d-none d-sm-block" Cols="2"></MCol>
-                <MCol Class="d-small-none" Cols="1"></MCol>
-                <MCol Class="align-middle-items">
-                    <MLabel>
-                        <h3>@label</h3>
-                    </MLabel>
-                </MCol>
-                <MCol Class="align-middle-items">
-                    <MTextField Disabled
-                                Label="@textLabel"
-                                Value="@value"></MTextField>
-                </MCol>
-                <MCol Class="d-none d-sm-block" Cols="2"></MCol>
-                <MCol Class="d-small-none" Cols="1"></MCol>
-            </MRow>
+            <ConfigurationRow Label="@label">
+                <MTextField Disabled
+                            Label="@textLabel"
+                            Value="@value"></MTextField>
+            </ConfigurationRow>
         }
 
     </MContainer>
@@ -50,11 +39,11 @@
 
     private List<ColumnInfo> ColumnInfos => new()
     {
-        new("PLC 连接状态", "PLC STATUS", _plcConnectionStatus ? "True" : "False"),
-        new("PLC IP 地址", "PLC IP", _plcInfo.Ip),
-        new("PLC CPU 类型", "PLC CPU TYPE", _plcInfo.CpuType),
-        new("PLC 机柜编号", "PLC RACK", _plcInfo.Rack.ToString()),
-        new("PLC 插槽编号", "PLC SLOT", _plcInfo.Slot.ToString())
+        new ColumnInfo("PLC 连接状态", "PLC STATUS", _plcConnectionStatus ? "True" : "False"),
+        new ColumnInfo("PLC IP 地址", "PLC IP", _plcInfo.Ip),
+        new ColumnInfo("PLC CPU 类型", "PLC CPU TYPE", _plcInfo.CpuType),
+        new ColumnInfo("PLC 机架编号", "PLC RACK", _plcInfo.Rack.ToString()),
+        new ColumnInfo("PLC 插槽编号", "PLC SLOT", _plcInfo.Slot.ToString())
     };
 
 }

@@ -1,0 +1,23 @@
+<MRow>
+    <MCol Class="d-none d-sm-block" Cols="2"></MCol>
+    <MCol Class="d-small-none" Cols="1"></MCol>
+    <MCol Class="align-middle-items">
+        <MLabel>
+            <h3>@Label</h3>
+        </MLabel>
+    </MCol>
+    <MCol Class="align-middle-items">
+        @ChildContent
+    </MCol>
+    <MCol Class="d-none d-sm-block" Cols="2"></MCol>
+    <MCol Class="d-small-none" Cols="1"></MCol>
+</MRow>
+
+@code
+{
+    [Parameter]
+    public string Label { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+}
