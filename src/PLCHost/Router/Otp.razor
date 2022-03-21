@@ -8,6 +8,44 @@
         <h2>PLC OTP 配置</h2>
     </div>
 
-    <!-- OTP 配置 -->
+    <MDivider></MDivider>
+
+    <MContainer Fluid>
+
+        <!-- OTP 状态 -->
+        <ConfigurationRow Label="OTP 状态">
+            <MTextField Disabled
+                        Label="OTP STATUS"
+                        Value="@OtpStatusString">
+            </MTextField>
+        </ConfigurationRow>
+
+        <!-- OTP 开关 -->
+
+        <ConfigurationRow Label="关闭 OTP">
+            <MButton Disabled="@OtpStatusInverted"
+                     Color="error"
+                     Large>
+                关闭
+            </MButton>
+        </ConfigurationRow>
+
+        <ConfigurationRow Label="开启 OTP">
+            <MButton Disabled="@_otpStatus"
+                     Color="success"
+                     Large>
+                开启
+            </MButton>
+        </ConfigurationRow>
+
+    </MContainer>
 
 </div>
+
+@code
+{
+    private readonly bool _otpStatus = false;
+
+    private bool OtpStatusInverted => !_otpStatus;
+    private string OtpStatusString => _otpStatus ? "Enabled" : "Disabled";
+}
