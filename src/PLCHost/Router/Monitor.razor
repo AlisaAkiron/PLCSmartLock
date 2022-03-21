@@ -2,5 +2,172 @@
 
 <PageTitle>PLC Smart Lock | Monitor</PageTitle>
 
+<div class="grid-center-items">
 
-<h1>Placeholder Monitor</h1>
+    <div class="align-middle-items">
+        <h2>PLC 监控</h2>
+    </div>
+
+    <MDivider></MDivider>
+
+    <MContainer Fluid>
+
+        <!-- 当前输入 数字密码 -->
+        <MRow>
+
+            <MCol Cols="1"></MCol>
+            <MCol>
+                <h3>当前输入值 (数字):</h3>
+            </MCol>
+
+        </MRow>
+        <MRow>
+            <MCol Cols="2">
+                <MCard Class="mx-auto">
+                    <MCardTitle Class="center-card-title">@DigitalPassword1</MCardTitle>
+                </MCard>
+            </MCol>
+            <MCol Cols="2">
+                <MCard Class="mx-auto">
+                    <MCardTitle Class="center-card-title">@DigitalPassword2</MCardTitle>
+                </MCard>
+            </MCol>
+            <MCol Cols="2">
+                <MCard Class="mx-auto">
+                    <MCardTitle Class="center-card-title">@DigitalPassword3</MCardTitle>
+                </MCard>
+            </MCol>
+            <MCol Cols="2">
+                <MCard Class="mx-auto">
+                    <MCardTitle Class="center-card-title">@DigitalPassword4</MCardTitle>
+                </MCard>
+            </MCol>
+            <MCol Cols="2">
+                <MCard Class="mx-auto">
+                    <MCardTitle Class="center-card-title">@DigitalPassword5</MCardTitle>
+                </MCard>
+            </MCol>
+            <MCol Cols="2">
+                <MCard Class="mx-auto">
+                    <MCardTitle Class="center-card-title">@DigitalPassword6</MCardTitle>
+                </MCard>
+            </MCol>
+
+        </MRow>
+
+        <!-- 当前输入 模拟密码 -->
+        <MRow>
+
+            <MCol Cols="1"></MCol>
+            <MCol>
+                <h3>当前输入值 (模拟):</h3>
+            </MCol>
+        </MRow>
+        <MRow Justify="JustifyTypes.Center">
+            <MCol>
+                <MCard Class="mx-auto">
+                    <MCardTitle Class="center-card-title">@AnalogPassword</MCardTitle>
+                </MCard>
+            </MCol>
+        </MRow>
+
+    </MContainer>
+
+    <MDivider></MDivider>
+
+    <MContainer Fluid>
+
+        <!-- 当前 OTP 密码 -->
+        <MRow>
+
+            <MCol Cols="1"></MCol>
+            <MCol>
+                <h3>OTP 密码:</h3>
+            </MCol>
+        </MRow>
+        <MRow>
+            <MCol Cols="2">
+                <MCard Class="mx-auto">
+                    <MCardTitle Class="center-card-title">@OtpPassword1</MCardTitle>
+                </MCard>
+            </MCol>
+            <MCol Cols="2">
+                <MCard Class="mx-auto">
+                    <MCardTitle Class="center-card-title">@OtpPassword2</MCardTitle>
+                </MCard>
+            </MCol>
+            <MCol Cols="2">
+                <MCard Class="mx-auto">
+                    <MCardTitle Class="center-card-title">@OtpPassword3</MCardTitle>
+                </MCard>
+            </MCol>
+            <MCol Cols="2">
+                <MCard Class="mx-auto">
+                    <MCardTitle Class="center-card-title">@OtpPassword4</MCardTitle>
+                </MCard>
+            </MCol>
+            <MCol Cols="2">
+                <MCard Class="mx-auto">
+                    <MCardTitle Class="center-card-title">@OtpPassword5</MCardTitle>
+                </MCard>
+            </MCol>
+            <MCol Cols="2">
+                <MCard Class="mx-auto">
+                    <MCardTitle Class="center-card-title">@OtpPassword6</MCardTitle>
+                </MCard>
+            </MCol>
+        </MRow>
+
+    </MContainer>
+
+</div>
+
+<style>
+    .center-card-title {
+        justify-content: center;
+    }
+</style>
+
+@code
+{
+    private readonly InputPassword _inputPassword = new()
+    {
+        DigitalInput1 = 1,
+        DigitalInput2 = 2,
+        DigitalInput3 = 3,
+        DigitalInput4 = 4,
+        DigitalInput5 = 5,
+        DigitalInput6 = 10,
+        AnalogInput = 255
+    };
+
+    private readonly OtpPassword _otpPassword = new()
+    {
+        OtpPassword1 = 9,
+        OtpPassword2 = 5,
+        OtpPassword3 = 3,
+        OtpPassword4 = 5,
+        OtpPassword5 = 4,
+        OtpPassword6 = 1,
+    };
+
+    private string DigitalPassword1 => FormatDigitalPassword(_inputPassword.DigitalInput1);
+    private string DigitalPassword2 => FormatDigitalPassword(_inputPassword.DigitalInput2);
+    private string DigitalPassword3 => FormatDigitalPassword(_inputPassword.DigitalInput3);
+    private string DigitalPassword4 => FormatDigitalPassword(_inputPassword.DigitalInput4);
+    private string DigitalPassword5 => FormatDigitalPassword(_inputPassword.DigitalInput5);
+    private string DigitalPassword6 => FormatDigitalPassword(_inputPassword.DigitalInput6);
+    private string AnalogPassword => _inputPassword.AnalogInput.ToString();
+
+    private string OtpPassword1 => FormatDigitalPassword(_otpPassword.OtpPassword1);
+    private string OtpPassword2 => FormatDigitalPassword(_otpPassword.OtpPassword2);
+    private string OtpPassword3 => FormatDigitalPassword(_otpPassword.OtpPassword3);
+    private string OtpPassword4 => FormatDigitalPassword(_otpPassword.OtpPassword4);
+    private string OtpPassword5 => FormatDigitalPassword(_otpPassword.OtpPassword5);
+    private string OtpPassword6 => FormatDigitalPassword(_otpPassword.OtpPassword6);
+
+    private static string FormatDigitalPassword(ushort dp)
+    {
+        return dp >= 10 ? "-" : dp.ToString();
+    }
+}
