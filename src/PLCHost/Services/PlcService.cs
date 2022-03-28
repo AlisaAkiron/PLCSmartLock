@@ -135,14 +135,14 @@ public class PlcService : IPlcService
             var rnd = new Random();
             staticPassword = new StaticPassword
             {
-                StaticPassword1 = (ushort)rnd.Next(1, 9),
-                StaticPassword2 = (ushort)rnd.Next(1, 9),
-                StaticPassword3 = (ushort)rnd.Next(1, 9),
-                StaticPassword4 = (ushort)rnd.Next(1, 9),
-                StaticPassword5 = (ushort)rnd.Next(1, 9),
-                StaticPassword6 = (ushort)rnd.Next(1, 9),
+                StaticPassword1 = (ushort)rnd.Next(0, 9),
+                StaticPassword2 = (ushort)rnd.Next(0, 9),
+                StaticPassword3 = (ushort)rnd.Next(0, 9),
+                StaticPassword4 = (ushort)rnd.Next(0, 9),
+                StaticPassword5 = (ushort)rnd.Next(0, 9),
+                StaticPassword6 = (ushort)rnd.Next(0, 9),
                 StaticPasswordAnalogLow = (ushort)rnd.Next(0, 400),
-                StaticPasswordAnalogHigh = (ushort)rnd.Next(401, 100)
+                StaticPasswordAnalogHigh = (ushort)rnd.Next(700, 1000)
             };
         }
 
