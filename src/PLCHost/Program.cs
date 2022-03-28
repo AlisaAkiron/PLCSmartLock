@@ -71,6 +71,7 @@ builder.Host.UseSerilog();
 builder.Configuration.AddConfiguration(configuration);
 
 builder.Services.AddDbContext<PlcHostDbContext>();
+builder.Services.AddPlcHostServices();
 builder.Services.AddMasaBlazor();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();

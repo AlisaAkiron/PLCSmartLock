@@ -4,3 +4,6 @@ global using PLCHost.Models.Entities;
 global using PLCHost.Models.Dtos;
 global using PLCHost.Models.DataBlocks;
 global using PLCHost.Extension;
+global using PLCHost.Services;
+global using PLCHost.Services.Interfaces;
+global using PLCHost.Enums;
