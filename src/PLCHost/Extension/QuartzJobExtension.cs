@@ -1,4 +1,5 @@
-﻿using Quartz;
+﻿using PLCHost.Jobs;
+using Quartz;
 
 namespace PLCHost.Extension;
 
@@ -14,6 +15,19 @@ public static class QuartzJobExtension
             q.UseSimpleTypeLoader();
             q.UseInMemoryStore();
             q.UseDefaultThreadPool(10);
+
+            q.ScheduleJob<OtpJob>(trigger =>
+            {
+                trigger.WithIdentity("PLC-HOST-OTP-TRIGGER", "PLC-HOST-TRIGGER-GROUP")
+                    .WithSimpleSchedule(schedule =>
+                    {
+                        schedule.WithIntervalInSeconds(2);
+                    })
+                    .StartNow();
+            }, job =>
+            {
+                job.WithIdentity("PLC-HOST-OTP-JOB", "PLC-HOST-JOB-GROUP");
+            });
         });
 
         service.AddQuartzHostedService(configure =>
