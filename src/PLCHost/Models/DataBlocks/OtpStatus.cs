@@ -2,5 +2,5 @@
 
 public struct OtpStatus
 {
-    public bool OtpEnabled { get; set; }
+    public byte OtpEnabled { get; set; }
 }
