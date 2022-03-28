@@ -75,6 +75,7 @@ builder.Services.AddPlcHostServices();
 builder.Services.AddMasaBlazor();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+builder.Services.AddPlcHostJobs();
 
 var app = builder.Build();
 
