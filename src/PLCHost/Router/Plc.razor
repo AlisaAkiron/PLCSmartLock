@@ -1,4 +1,6 @@
 ﻿@page "/plc"
+@using S7.Net
+@inject IPlcService _plcService
 
 <PageTitle>PLC Smart Lock | PLC</PageTitle>
 
@@ -23,27 +25,133 @@
 
     </MContainer>
 
+    <MContainer Class="grid-center-items">
+        <MRow Justify="JustifyTypes.Center">
+            <MCol>
+                <MDialog @bind-Value="_dialog"
+                         Fullscreen
+                         Transition="dialog-bottom-transition">
+                    <ActivatorContent>
+                        <MButton Color="primary"
+                                 Attributes="@context.Attrs">
+                            修改 PLC 连接信息
+                        </MButton>
+                    </ActivatorContent>
+                    <ChildContent>
+                        <MCard>
+                            <MCardTitle></MCardTitle>
+                            <MCardText>
+                                <MContainer>
+                                    <ConfigurationRow Label="PLC IP">
+                                        <MTextField Label="IP"
+                                                    @bind-Value="_inputPlcIp"></MTextField>
+                                    </ConfigurationRow>
+                                    <ConfigurationRow Label="PLC CPU TYPE">
+                                        <MSelect @bind-Value="_inputPlcCpuType"
+                                                 Label="CPU TYPE"
+                                                 Items="_cpuTypeItems"
+                                                 ItemText="i => i.TypeString"
+                                                 ItemValue="i => i.Type"
+                                                 MenuProps="props => props.OffsetY = true"></MSelect>
+                                    </ConfigurationRow>
+                                    <ConfigurationRow Label="PLC RACK">
+                                        <MTextField Label="RACK"
+                                                    @bind-Value="_inputPlcRack"></MTextField>
+                                    </ConfigurationRow>
+                                    <ConfigurationRow Label="PLC SLOT">
+                                        <MTextField Label="SLOT"
+                                                    @bind-Value="_inputPlcSlot"></MTextField>
+                                    </ConfigurationRow>
+                                </MContainer>
+                            </MCardText>
+                            <MCardActions>
+                                <MSpacer></MSpacer>
+                                <MButton Color="primary"
+                                         OnClick="ChangePlcConnectionInfoButtonClicked">
+                                    确认
+                                </MButton>
+                            </MCardActions>
+                        </MCard>
+                    </ChildContent>
+                </MDialog>
+            </MCol>
+            <MCol>
+                <MButton Color="success"
+                         OnClick="StatusRefreshButtonClicked">刷新状态</MButton>
+            </MCol>
+            <MButton Color="error"
+                     OnClick="ReconnectButtonClicked">
+                重新连接 PLC
+            </MButton>
+        </MRow>
+    </MContainer>
+
 </div>
 
 @code {
     public record ColumnInfo(string Label, string TextLabel, string Value);
+    public record CpuTypeItem(string TypeString, string Type);
 
-    private readonly bool _plcConnectionStatus = false;
-    private readonly PlcInfo _plcInfo = new()
+    private bool _plcConnectionStatus;
+    private PlcInfo _plcInfo;
+
+    private bool _dialog;
+
+    private string _inputPlcIp;
+    private string _inputPlcCpuType;
+    private short _inputPlcRack;
+    private short _inputPlcSlot;
+
+    private readonly List<CpuTypeItem> _cpuTypeItems = new()
     {
-        Ip = "10.110.1.1",
-        CpuType = S7.Net.CpuType.S71200.ToFormattedString(),
-        Rack = 0,
-        Slot = 1
+        new CpuTypeItem(CpuType.S7200.ToFormattedString(), CpuType.S7200.ToFormattedString()),
+        new CpuTypeItem(CpuType.S7300.ToFormattedString(), CpuType.S7300.ToFormattedString()),
+        new CpuTypeItem(CpuType.S7400.ToFormattedString(), CpuType.S7400.ToFormattedString()),
+        new CpuTypeItem(CpuType.S71200.ToFormattedString(), CpuType.S71200.ToFormattedString()),
+        new CpuTypeItem(CpuType.S71500.ToFormattedString(), CpuType.S71500.ToFormattedString()),
+        new CpuTypeItem(CpuType.S7200Smart.ToFormattedString(), CpuType.S7200Smart.ToFormattedString()),
+        new CpuTypeItem(CpuType.Logo0BA8.ToFormattedString(), CpuType.Logo0BA8.ToFormattedString()),
     };
 
     private List<ColumnInfo> ColumnInfos => new()
     {
         new ColumnInfo("PLC 连接状态", "PLC STATUS", _plcConnectionStatus ? "True" : "False"),
-        new ColumnInfo("PLC IP 地址", "PLC IP", _plcInfo.Ip),
-        new ColumnInfo("PLC CPU 类型", "PLC CPU TYPE", _plcInfo.CpuType),
-        new ColumnInfo("PLC 机架编号", "PLC RACK", _plcInfo.Rack.ToString()),
-        new ColumnInfo("PLC 插槽编号", "PLC SLOT", _plcInfo.Slot.ToString())
+        new ColumnInfo("PLC IP 地址", "PLC IP", _plcInfo is null ? "NULL" : _plcInfo.Ip),
+        new ColumnInfo("PLC CPU 类型", "PLC CPU TYPE", _plcInfo is null ? "NULL" : _plcInfo.CpuType),
+        new ColumnInfo("PLC 机架编号", "PLC RACK", _plcInfo is null ? "NULL" : _plcInfo.Rack.ToString()),
+        new ColumnInfo("PLC 插槽编号", "PLC SLOT", _plcInfo is null ? "NULL" : _plcInfo.Slot.ToString())
     };
 
+    protected override void OnInitialized()
+    {
+        StatusRefreshButtonClicked();
+    }
+
+    private void StatusRefreshButtonClicked()
+    {
+        _plcInfo = _plcService.GetPlcConnectionInfo();
+        _plcConnectionStatus = _plcService.GetPlcConnectionStatus();
+    }
+
+    private void ReconnectButtonClicked()
+    {
+        _plcService.DisConnect();
+        _plcService.Connect();
+        StatusRefreshButtonClicked();
+    }
+
+    private void ChangePlcConnectionInfoButtonClicked()
+    {
+        var plcConnectionInfo = new PlcInfo
+        {
+            CpuType = _inputPlcCpuType,
+            Ip = _inputPlcIp,
+            Rack = _inputPlcRack,
+            Slot = _inputPlcSlot
+        };
+        _dialog = false;
+
+        _plcService.SetPlcConnectionInfo(plcConnectionInfo);
+        _plcService.Connect();
+    }
 }
