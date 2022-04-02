@@ -95,7 +95,7 @@ if (File.Exists(dbFile) is false)
         return;
     }
 
-    db.Database.Migrate();
+    await db.Database.MigrateAsync();
     await db.DisposeAsync();
 }
 
