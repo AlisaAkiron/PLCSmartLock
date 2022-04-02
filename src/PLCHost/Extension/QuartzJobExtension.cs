@@ -23,7 +23,7 @@ public static class QuartzJobExtension
                     {
                         schedule.WithIntervalInSeconds(2);
                     })
-                    .StartAt(DateTimeOffset.Now.AddSeconds(10));
+                    .StartNow();
             }, job =>
             {
                 job.WithIdentity("PLC-HOST-OTP-JOB", "PLC-HOST-JOB-GROUP");
