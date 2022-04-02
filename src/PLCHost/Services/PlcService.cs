@@ -255,6 +255,18 @@ public class PlcService : IPlcService
     }
 
     /// <inheritdoc />
+    public async Task<InputPassword> ReadInputPassword()
+    {
+        if (!GetPlcConnectionStatus())
+        {
+            return null;
+        }
+
+        var data = await _plc.ReadClassAsync<InputPassword>(1);
+        return data;
+    }
+
+    /// <inheritdoc />
     public async Task<StaticPassword> ReadStaticPassword()
     {
         if (!GetPlcConnectionStatus())
