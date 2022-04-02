@@ -79,10 +79,12 @@
                 <MButton Color="success"
                          OnClick="StatusRefreshButtonClicked">刷新状态</MButton>
             </MCol>
-            <MButton Color="error"
-                     OnClick="ReconnectButtonClicked">
-                重新连接 PLC
-            </MButton>
+            <MCol>
+                <MButton Color="error"
+                         OnClick="ReconnectButtonClicked">
+                    重新连接 PLC
+                </MButton>
+            </MCol>
         </MRow>
     </MContainer>
 
@@ -137,6 +139,7 @@
     {
         _plcService.DisConnect();
         _plcService.Connect();
+        _plcService.WriteOpenWorkStatus();
         StatusRefreshButtonClicked();
     }
 
