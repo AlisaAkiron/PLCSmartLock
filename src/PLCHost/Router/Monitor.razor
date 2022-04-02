@@ -1,4 +1,7 @@
 ﻿@page "/monitor"
+@using System.Timers
+@inject IPlcService _plcService
+@inject IOtpService _otpService
 
 <PageTitle>PLC Smart Lock | Monitor</PageTitle>
 
@@ -82,7 +85,7 @@
 
             <MCol Cols="1"></MCol>
             <MCol>
-                <h3>OTP 密码:</h3>
+                <h3>OTP 密码 (剩余 @OtpRemainingTime 秒):</h3>
             </MCol>
         </MRow>
         <MRow>
@@ -130,26 +133,27 @@
 
 @code
 {
-    private readonly InputPassword _inputPassword = new()
+    private InputPassword _inputPassword = new()
     {
-        DigitalInput1 = 1,
-        DigitalInput2 = 2,
-        DigitalInput3 = 3,
-        DigitalInput4 = 4,
-        DigitalInput5 = 5,
+        DigitalInput1 = 10,
+        DigitalInput2 = 10,
+        DigitalInput3 = 10,
+        DigitalInput4 = 10,
+        DigitalInput5 = 10,
         DigitalInput6 = 10,
-        AnalogInput = 255
+        AnalogInput = 0
     };
 
-    private readonly OtpPassword _otpPassword = new()
+    private OtpPassword _otpPassword = new()
     {
-        OtpPassword1 = 9,
-        OtpPassword2 = 5,
-        OtpPassword3 = 3,
-        OtpPassword4 = 5,
-        OtpPassword5 = 4,
-        OtpPassword6 = 1,
+        OtpPassword1 = 10,
+        OtpPassword2 = 10,
+        OtpPassword3 = 10,
+        OtpPassword4 = 10,
+        OtpPassword5 = 10,
+        OtpPassword6 = 10,
     };
+    private int _otpRemainingTime = -1;
 
     private string DigitalPassword1 => FormatDigitalPassword(_inputPassword.DigitalInput1);
     private string DigitalPassword2 => FormatDigitalPassword(_inputPassword.DigitalInput2);
@@ -165,9 +169,46 @@
     private string OtpPassword4 => FormatDigitalPassword(_otpPassword.OtpPassword4);
     private string OtpPassword5 => FormatDigitalPassword(_otpPassword.OtpPassword5);
     private string OtpPassword6 => FormatDigitalPassword(_otpPassword.OtpPassword6);
+    private string OtpRemainingTime => _otpRemainingTime < 0 ? "NaN" : _otpRemainingTime.ToString();
 
     private static string FormatDigitalPassword(ushort dp)
     {
         return dp >= 10 ? "-" : dp.ToString();
+    }
+
+    private Timer _timer;
+
+    protected override void OnInitialized()
+    {
+        _timer = new Timer(500);
+
+        _timer.Elapsed += async (_, _) =>
+        {
+            _inputPassword = await _plcService.ReadInputPassword();
+            var otpStatus = await _plcService.ReadOtpStatus();
+            if (otpStatus.OtpEnabled is 0)
+            {
+                _otpPassword = new OtpPassword
+                {
+                    OtpPassword1 = 10,
+                    OtpPassword2 = 10,
+                    OtpPassword3 = 10,
+                    OtpPassword4 = 10,
+                    OtpPassword5 = 10,
+                    OtpPassword6 = 10,
+                };
+                _otpRemainingTime = -1;
+            }
+            else
+            {
+                var (otpPassword, remainingTime) = _otpService.CalculatePassword();
+                _otpPassword = otpPassword;
+                _otpRemainingTime = remainingTime;
+            }
+
+            await InvokeAsync(StateHasChanged);
+        };
+
+        _timer.Start();
     }
 }
