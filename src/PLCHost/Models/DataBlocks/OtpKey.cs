@@ -1,6 +1,6 @@
 ﻿namespace PLCHost.Models.DataBlocks;
 
-public struct OtpKey
+public class OtpKey
 {
     public byte[] OtpKeyArray { get; set; }
 }

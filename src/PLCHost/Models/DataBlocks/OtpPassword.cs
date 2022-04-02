@@ -1,6 +1,6 @@
 ﻿namespace PLCHost.Models.DataBlocks;
 
-public struct OtpPassword
+public class OtpPassword
 {
     public ushort OtpPassword1 { get; set; }
     public ushort OtpPassword2 { get; set; }

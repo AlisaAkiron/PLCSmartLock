@@ -21,7 +21,7 @@ public class OtpJob : IJob
         }
 
         var otpStatus = await _plcService.ReadOtpStatus();
-        if (otpStatus is not null && otpStatus.Value.OtpEnabled == 0)
+        if (otpStatus is not null && otpStatus.OtpEnabled == 0)
         {
             return;
         }

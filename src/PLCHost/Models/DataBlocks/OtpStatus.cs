@@ -1,6 +1,6 @@
 ﻿namespace PLCHost.Models.DataBlocks;
 
-public struct OtpStatus
+public class OtpStatus
 {
     public byte OtpEnabled { get; set; }
 }

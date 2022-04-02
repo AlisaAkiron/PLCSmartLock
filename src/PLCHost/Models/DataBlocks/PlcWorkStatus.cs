@@ -1,6 +1,6 @@
 ﻿namespace PLCHost.Models.DataBlocks;
 
-public struct PlcWorkStatus
+public class PlcWorkStatus
 {
-    public ushort WorkStatus { get; set; }
+    public byte WorkStatus { get; set; }
 }

@@ -141,13 +141,13 @@ public class PlcService : IPlcService
                 StaticPassword4 = (ushort)rnd.Next(0, 9),
                 StaticPassword5 = (ushort)rnd.Next(0, 9),
                 StaticPassword6 = (ushort)rnd.Next(0, 9),
-                StaticPasswordAnalogLow = (ushort)rnd.Next(0, 400),
-                StaticPasswordAnalogHigh = (ushort)rnd.Next(700, 1000)
+                StaticPasswordAnalogHigh = (ushort)rnd.Next(50000, 60000),
+                StaticPasswordAnalogLow = (ushort)rnd.Next(10000, 20000)
             };
         }
 
         await WriteStaticPassword(staticPassword);
-        await _plc.WriteStructAsync(new PlcWorkStatus { WorkStatus = 1 }, 9);
+        await _plc.WriteClassAsync(new PlcWorkStatus { WorkStatus = 1 }, 9);
         return true;
     }
 
@@ -157,7 +157,7 @@ public class PlcService : IPlcService
         if (GetPlcConnectionStatus())
         {
             _logger.LogInformation("Write close work status to PLC");
-            await _plc.WriteStructAsync(new PlcWorkStatus { WorkStatus = 0 }, 9);
+            await _plc.WriteClassAsync(new PlcWorkStatus { WorkStatus = 0 }, 9);
             return true;
         }
 
@@ -189,7 +189,7 @@ public class PlcService : IPlcService
             _logger.LogDebug("Write OTP password {Password} to PLC",
                 $"{otpPassword.OtpPassword1}{otpPassword.OtpPassword2}{otpPassword.OtpPassword3}" +
                 $"{otpPassword.OtpPassword4}{otpPassword.OtpPassword5}{otpPassword.OtpPassword6}");
-            await _plc.WriteStructAsync(otpPassword, 3);
+            await _plc.WriteClassAsync(otpPassword, 3);
             return true;
         }
 
@@ -203,7 +203,7 @@ public class PlcService : IPlcService
         if (GetPlcConnectionStatus())
         {
             _logger.LogInformation("Write OTP status {Status} to PLC", otpStatus.OtpEnabled);
-            await _plc.WriteStructAsync(otpStatus, 5);
+            await _plc.WriteClassAsync(otpStatus, 5);
             return true;
         }
 
@@ -222,7 +222,7 @@ public class PlcService : IPlcService
                 $"{staticPassword.StaticPassword1}{staticPassword.StaticPassword2}{staticPassword.StaticPassword3}" +
                 $"{staticPassword.StaticPassword4}{staticPassword.StaticPassword5}{staticPassword.StaticPassword6}|" +
                 $"{staticPassword.StaticPasswordAnalogLow}-{staticPassword.StaticPasswordAnalogHigh}");
-            await _plc.WriteStructAsync(staticPassword, 2);
+            await _plc.WriteClassAsync(staticPassword, 2);
             return true;
         }
 
@@ -231,7 +231,7 @@ public class PlcService : IPlcService
     }
 
     /// <inheritdoc />
-    public async Task<OtpKey?> ReadOtpKey()
+    public async Task<OtpKey> ReadOtpKey()
     {
         if (!GetPlcConnectionStatus())
         {
@@ -243,26 +243,26 @@ public class PlcService : IPlcService
     }
 
     /// <inheritdoc />
-    public async Task<OtpStatus?> ReadOtpStatus()
+    public async Task<OtpStatus> ReadOtpStatus()
     {
         if (!GetPlcConnectionStatus())
         {
             return null;
         }
 
-        var data = await _plc.ReadStructAsync<OtpStatus>(5);
+        var data = await _plc.ReadClassAsync<OtpStatus>(5);
         return data;
     }
 
     /// <inheritdoc />
-    public async Task<StaticPassword?> ReadStaticPassword()
+    public async Task<StaticPassword> ReadStaticPassword()
     {
         if (!GetPlcConnectionStatus())
         {
             return null;
         }
 
-        var data = await _plc.ReadStructAsync<StaticPassword>(2);
+        var data = await _plc.ReadClassAsync<StaticPassword>(2);
         return data;
     }
 

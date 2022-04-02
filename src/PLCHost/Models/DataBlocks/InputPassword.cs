@@ -1,6 +1,6 @@
 ﻿namespace PLCHost.Models.DataBlocks;
 
-public struct InputPassword
+public class InputPassword
 {
     public ushort DigitalInput1 { get; set; }
     public ushort DigitalInput2 { get; set; }

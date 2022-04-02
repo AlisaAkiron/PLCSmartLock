@@ -67,15 +67,15 @@ public interface IPlcService
     /// 获取 OTP 密钥
     /// </summary>
     /// <returns></returns>
-    Task<OtpKey?> ReadOtpKey();
+    Task<OtpKey> ReadOtpKey();
     /// <summary>
     /// 获取 OTP 状态
     /// </summary>
     /// <returns></returns>
-    Task<OtpStatus?> ReadOtpStatus();
+    Task<OtpStatus> ReadOtpStatus();
     /// <summary>
     /// 获取静态密码
     /// </summary>
     /// <returns></returns>
-    Task<StaticPassword?> ReadStaticPassword();
+    Task<StaticPassword> ReadStaticPassword();
 }
