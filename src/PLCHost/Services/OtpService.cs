@@ -16,7 +16,7 @@ public class OtpService : IOtpService
     public byte[] GenerateOtpKey()
     {
         var key = KeyGeneration.GenerateRandomKey(20);
-        _totp = new Totp(key);
+        SetOtpKey(key);
         return key;
     }
 
@@ -29,9 +29,8 @@ public class OtpService : IOtpService
     /// <inheritdoc />
     public (OtpPassword, int) CalculatePassword()
     {
-        var current = DateTime.Now;
-        var code = _totp.ComputeTotp(current).ToCharArray();
-        var remainingTime = _totp.RemainingSeconds(current);
+        var code = _totp.ComputeTotp().ToCharArray();
+        var remainingTime = _totp.RemainingSeconds();
 
         var otpPassword = new OtpPassword
         {
@@ -44,5 +43,15 @@ public class OtpService : IOtpService
         };
 
         return (otpPassword, remainingTime);
+    }
+
+    public bool Verify(string? pass)
+    {
+        if (string.IsNullOrEmpty(pass))
+        {
+            return false;
+        }
+        var realPass = _totp.ComputeTotp();
+        return realPass == pass;
     }
 }

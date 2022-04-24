@@ -6,5 +6,6 @@ public static class ServiceExtension
     {
         service.AddSingleton<IPlcService, PlcService>();
         service.AddSingleton<IOtpService, OtpService>();
+        service.AddSingleton<IQrCodeService, QrCodeService>();
     }
 }

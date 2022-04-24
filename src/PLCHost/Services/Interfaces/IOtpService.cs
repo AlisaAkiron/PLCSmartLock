@@ -17,4 +17,10 @@ public interface IOtpService
     /// </summary>
     /// <returns></returns>
     (OtpPassword, int) CalculatePassword();
+    /// <summary>
+    /// 验证 OTP 密码
+    /// </summary>
+    /// <param name="pass"></param>
+    /// <returns></returns>
+    bool Verify(string? pass);
 }
