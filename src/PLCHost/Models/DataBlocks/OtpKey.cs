@@ -2,5 +2,5 @@
 
 public class OtpKey
 {
-    public byte[] OtpKeyArray { get; set; }
+    public byte[]? OtpKeyArray { get; set; }
 }

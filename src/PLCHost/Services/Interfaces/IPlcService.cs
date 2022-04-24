@@ -11,7 +11,7 @@ public interface IPlcService
     /// 获取 PLC 连接信息
     /// </summary>
     /// <returns></returns>
-    PlcInfo GetPlcConnectionInfo();
+    PlcInfo? GetPlcConnectionInfo();
 
     /// <summary>
     /// 连接，返回 <see cref="GetPlcConnectionStatus"/> 的值
@@ -61,26 +61,26 @@ public interface IPlcService
     /// </summary>
     /// <param name="staticPassword"></param>
     /// <returns></returns>
-    Task<bool> WriteStaticPassword(StaticPassword staticPassword);
+    Task<bool> WriteStaticPassword(StaticPassword? staticPassword);
 
     /// <summary>
     /// 获取 OTP 密钥
     /// </summary>
     /// <returns></returns>
-    Task<OtpKey> ReadOtpKey();
+    Task<OtpKey?> ReadOtpKey();
     /// <summary>
     /// 获取 OTP 状态
     /// </summary>
     /// <returns></returns>
-    Task<OtpStatus> ReadOtpStatus();
+    Task<OtpStatus?> ReadOtpStatus();
     /// <summary>
     /// 获取当前输入密码
     /// </summary>
     /// <returns></returns>
-    Task<InputPassword> ReadInputPassword();
+    Task<InputPassword?> ReadInputPassword();
     /// <summary>
     /// 获取静态密码
     /// </summary>
     /// <returns></returns>
-    Task<StaticPassword> ReadStaticPassword();
+    Task<StaticPassword?> ReadStaticPassword();
 }

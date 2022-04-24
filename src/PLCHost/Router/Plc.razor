@@ -1,6 +1,6 @@
 ﻿@page "/plc"
 @using S7.Net
-@inject IPlcService _plcService
+@inject IPlcService PlcService
 
 <PageTitle>PLC Smart Lock | PLC</PageTitle>
 
@@ -91,16 +91,16 @@
 </div>
 
 @code {
-    public record ColumnInfo(string Label, string TextLabel, string Value);
+    public record ColumnInfo(string Label, string TextLabel, string? Value);
     public record CpuTypeItem(string TypeString, string Type);
 
     private bool _plcConnectionStatus;
-    private PlcInfo _plcInfo;
+    private PlcInfo? _plcInfo;
 
     private bool _dialog;
 
-    private string _inputPlcIp;
-    private string _inputPlcCpuType;
+    private string? _inputPlcIp;
+    private string? _inputPlcCpuType;
     private short _inputPlcRack;
     private short _inputPlcSlot;
 
@@ -131,15 +131,15 @@
 
     private void StatusRefreshButtonClicked()
     {
-        _plcInfo = _plcService.GetPlcConnectionInfo();
-        _plcConnectionStatus = _plcService.GetPlcConnectionStatus();
+        _plcInfo = PlcService.GetPlcConnectionInfo();
+        _plcConnectionStatus = PlcService.GetPlcConnectionStatus();
     }
 
     private void ReconnectButtonClicked()
     {
-        _plcService.DisConnect();
-        _plcService.Connect();
-        _plcService.WriteOpenWorkStatus();
+        PlcService.DisConnect();
+        PlcService.Connect();
+        PlcService.WriteOpenWorkStatus();
         StatusRefreshButtonClicked();
     }
 
@@ -154,7 +154,7 @@
         };
         _dialog = false;
 
-        _plcService.SetPlcConnectionInfo(plcConnectionInfo);
-        _plcService.Connect();
+        PlcService.SetPlcConnectionInfo(plcConnectionInfo);
+        PlcService.Connect();
     }
 }

@@ -11,7 +11,7 @@ public class PlcHostDbContext : DbContext
         _configuration = configuration;
     }
 
-    public DbSet<Persistent> Persistent { get; set; }
+    public DbSet<Persistent>? Persistent { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

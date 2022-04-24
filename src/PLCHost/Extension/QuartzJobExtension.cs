@@ -19,9 +19,10 @@ public static class QuartzJobExtension
             q.ScheduleJob<OtpJob>(trigger =>
             {
                 trigger.WithIdentity("PLC-HOST-OTP-TRIGGER", "PLC-HOST-TRIGGER-GROUP")
-                    .WithSimpleSchedule(schedule =>
+                    .WithCalendarIntervalSchedule(schedule =>
                     {
-                        schedule.WithIntervalInSeconds(2);
+                        schedule.WithIntervalInSeconds(1);
+                        schedule.WithMisfireHandlingInstructionDoNothing();
                     })
                     .StartNow();
             }, job =>
@@ -32,7 +33,7 @@ public static class QuartzJobExtension
 
         service.AddQuartzHostedService(configure =>
         {
-            configure.WaitForJobsToComplete = false;
+            configure.WaitForJobsToComplete = true;
         });
     }
 }

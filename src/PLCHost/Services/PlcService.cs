@@ -6,7 +6,7 @@ namespace PLCHost.Services;
 
 public class PlcService : IPlcService
 {
-    private Plc _plc;
+    private Plc? _plc;
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<PlcService> _logger;
 
@@ -24,7 +24,7 @@ public class PlcService : IPlcService
 
         var plcInfo = JsonSerializer.Deserialize<PlcInfo>(plcInfoString);
 
-        if (plcInfo is null)
+        if (plcInfo is null || plcInfo.Ip is null)
         {
             _logger.LogError("PLC info in database can not be deserialized");
             return;
@@ -43,13 +43,13 @@ public class PlcService : IPlcService
             _logger.LogInformation("Change PLC info, disconnect from current instance");
             DisConnect();
         }
-        _plc = new Plc(plcInfo.CpuType.ToCpuType(), plcInfo.Ip, plcInfo.Rack, plcInfo.Slot);
+        _plc = new Plc(plcInfo.CpuType.ToCpuType(), plcInfo.Ip!, plcInfo.Rack, plcInfo.Slot);
 
         WriteDatabase(DbPersistKey.PlcInfo, JsonSerializer.Serialize(plcInfo)).Wait();
     }
 
     /// <inheritdoc />
-    public PlcInfo GetPlcConnectionInfo()
+    public PlcInfo? GetPlcConnectionInfo()
     {
         if (_plc is not null)
         {
@@ -69,7 +69,14 @@ public class PlcService : IPlcService
         if (_plc?.IsConnected is false)
         {
             _logger.LogInformation("Start a PLC connection");
-            _plc.Open();
+            try
+            {
+                _plc.Open();
+            }
+            catch (Exception)
+            {
+                // Ignore
+            }
         }
 
         if (GetPlcConnectionStatus())
@@ -124,7 +131,7 @@ public class PlcService : IPlcService
 
         _logger.LogInformation("Write open work status to PLC");
 
-        StaticPassword staticPassword;
+        StaticPassword? staticPassword;
         var staticPasswordString = await ReadDatabase(DbPersistKey.StaticPassword);
         if (staticPasswordString is not null)
         {
@@ -147,7 +154,7 @@ public class PlcService : IPlcService
         }
 
         await WriteStaticPassword(staticPassword);
-        await _plc.WriteClassAsync(new PlcWorkStatus { WorkStatus = 1 }, 9);
+        await _plc!.WriteClassAsync(new PlcWorkStatus { WorkStatus = 1 }, 9);
         return true;
     }
 
@@ -157,7 +164,7 @@ public class PlcService : IPlcService
         if (GetPlcConnectionStatus())
         {
             _logger.LogInformation("Write close work status to PLC");
-            await _plc.WriteClassAsync(new PlcWorkStatus { WorkStatus = 0 }, 9);
+            await _plc!.WriteClassAsync(new PlcWorkStatus { WorkStatus = 0 }, 9);
             return true;
         }
 
@@ -173,7 +180,7 @@ public class PlcService : IPlcService
             var serialized = JsonSerializer.Serialize(otpKey);
             await WriteDatabase(DbPersistKey.OtpKey, serialized);
             _logger.LogDebug("Write OTP key to PLC");
-            await _plc.WriteBytesAsync(DataType.DataBlock, 6, 0, otpKey.OtpKeyArray);
+            await _plc!.WriteBytesAsync(DataType.DataBlock, 6, 0, otpKey.OtpKeyArray!);
             return true;
         }
 
@@ -189,7 +196,7 @@ public class PlcService : IPlcService
             _logger.LogDebug("Write OTP password {Password} to PLC",
                 $"{otpPassword.OtpPassword1}{otpPassword.OtpPassword2}{otpPassword.OtpPassword3}" +
                 $"{otpPassword.OtpPassword4}{otpPassword.OtpPassword5}{otpPassword.OtpPassword6}");
-            await _plc.WriteClassAsync(otpPassword, 3);
+            await _plc!.WriteClassAsync(otpPassword, 3);
             return true;
         }
 
@@ -203,7 +210,7 @@ public class PlcService : IPlcService
         if (GetPlcConnectionStatus())
         {
             _logger.LogInformation("Write OTP status {Status} to PLC", otpStatus.OtpEnabled);
-            await _plc.WriteClassAsync(otpStatus, 5);
+            await _plc!.WriteClassAsync(otpStatus, 5);
             return true;
         }
 
@@ -212,17 +219,17 @@ public class PlcService : IPlcService
     }
 
     /// <inheritdoc />
-    public async Task<bool> WriteStaticPassword(StaticPassword staticPassword)
+    public async Task<bool> WriteStaticPassword(StaticPassword? staticPassword)
     {
         if (GetPlcConnectionStatus())
         {
             var serialized = JsonSerializer.Serialize(staticPassword);
             await WriteDatabase(DbPersistKey.StaticPassword, serialized);
             _logger.LogDebug("Write static password {Password} to PLC",
-                $"{staticPassword.StaticPassword1}{staticPassword.StaticPassword2}{staticPassword.StaticPassword3}" +
+                $"{staticPassword!.StaticPassword1}{staticPassword.StaticPassword2}{staticPassword.StaticPassword3}" +
                 $"{staticPassword.StaticPassword4}{staticPassword.StaticPassword5}{staticPassword.StaticPassword6}|" +
                 $"{staticPassword.StaticPasswordAnalogLow}-{staticPassword.StaticPasswordAnalogHigh}");
-            await _plc.WriteClassAsync(staticPassword, 2);
+            await _plc!.WriteClassAsync(staticPassword, 2);
             return true;
         }
 
@@ -231,50 +238,50 @@ public class PlcService : IPlcService
     }
 
     /// <inheritdoc />
-    public async Task<OtpKey> ReadOtpKey()
+    public async Task<OtpKey?> ReadOtpKey()
     {
         if (!GetPlcConnectionStatus())
         {
             return null;
         }
 
-        var data = await _plc.ReadBytesAsync(DataType.DataBlock, 6, 0, 20);
+        var data = await _plc!.ReadBytesAsync(DataType.DataBlock, 6, 0, 20);
         return new OtpKey { OtpKeyArray = data };
     }
 
     /// <inheritdoc />
-    public async Task<OtpStatus> ReadOtpStatus()
+    public async Task<OtpStatus?> ReadOtpStatus()
     {
         if (!GetPlcConnectionStatus())
         {
             return null;
         }
 
-        var data = await _plc.ReadClassAsync<OtpStatus>(5);
+        var data = await _plc!.ReadClassAsync<OtpStatus>(5);
         return data;
     }
 
     /// <inheritdoc />
-    public async Task<InputPassword> ReadInputPassword()
+    public async Task<InputPassword?> ReadInputPassword()
     {
         if (!GetPlcConnectionStatus())
         {
             return null;
         }
 
-        var data = await _plc.ReadClassAsync<InputPassword>(1);
+        var data = await _plc!.ReadClassAsync<InputPassword>(1);
         return data;
     }
 
     /// <inheritdoc />
-    public async Task<StaticPassword> ReadStaticPassword()
+    public async Task<StaticPassword?> ReadStaticPassword()
     {
         if (!GetPlcConnectionStatus())
         {
             return null;
         }
 
-        var data = await _plc.ReadClassAsync<StaticPassword>(2);
+        var data = await _plc!.ReadClassAsync<StaticPassword>(2);
         return data;
     }
 
@@ -283,15 +290,15 @@ public class PlcService : IPlcService
     /// </summary>
     /// <param name="key">Key</param>
     /// <param name="value">序列化后的字符串值</param>
-    private async Task WriteDatabase(DbPersistKey key, string value)
+    private async Task WriteDatabase(DbPersistKey key, string? value)
     {
         using var scope = _scopeFactory.CreateScope();
         await using var db = scope.ServiceProvider.GetRequiredService<PlcHostDbContext>();
 
-        var exist = await db.Persistent.FirstOrDefaultAsync(x => x.Key == key.ToString());
+        var exist = await db.Persistent!.FirstOrDefaultAsync(x => x.Key == key.ToString());
         if (exist is null)
         {
-            await db.Persistent.AddAsync(new Persistent { Id = Guid.NewGuid(), Key = key.ToString(), Value = value });
+            await db.Persistent!.AddAsync(new Persistent { Id = Guid.NewGuid(), Key = key.ToString(), Value = value });
         }
         else
         {
@@ -307,12 +314,12 @@ public class PlcService : IPlcService
     /// </summary>
     /// <param name="key">Key</param>
     /// <returns>序列化后的字符串值</returns>
-    private async Task<string> ReadDatabase(DbPersistKey key)
+    private async Task<string?> ReadDatabase(DbPersistKey key)
     {
         using var scope = _scopeFactory.CreateScope();
         await using var db = scope.ServiceProvider.GetRequiredService<PlcHostDbContext>();
 
-        var exist = await db.Persistent.FirstOrDefaultAsync(x => x.Key == key.ToString());
+        var exist = await db.Persistent!.FirstOrDefaultAsync(x => x.Key == key.ToString());
 
         return exist?.Value;
     }

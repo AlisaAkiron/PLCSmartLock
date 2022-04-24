@@ -19,7 +19,7 @@ public static class PlcCpuTypeExtension
         };
     }
 
-    public static CpuType ToCpuType(this string cpuTypeString)
+    public static CpuType ToCpuType(this string? cpuTypeString)
     {
         return cpuTypeString switch
         {

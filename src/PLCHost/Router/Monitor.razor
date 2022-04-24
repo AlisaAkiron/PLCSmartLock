@@ -1,7 +1,7 @@
 ﻿@page "/monitor"
 @using System.Timers
-@inject IPlcService _plcService
-@inject IOtpService _otpService
+@inject IPlcService PlcService
+@inject IOtpService OtpService
 
 <PageTitle>PLC Smart Lock | Monitor</PageTitle>
 
@@ -176,7 +176,7 @@
         return dp >= 10 ? "-" : dp.ToString();
     }
 
-    private Timer _timer;
+    private Timer? _timer;
 
     protected override void OnInitialized()
     {
@@ -184,9 +184,9 @@
 
         _timer.Elapsed += async (_, _) =>
         {
-            _inputPassword = await _plcService.ReadInputPassword();
-            var otpStatus = await _plcService.ReadOtpStatus();
-            if (otpStatus.OtpEnabled is 0)
+            _inputPassword = await PlcService.ReadInputPassword() ?? _inputPassword;
+            var otpStatus = await PlcService.ReadOtpStatus();
+            if (otpStatus?.OtpEnabled is 0)
             {
                 _otpPassword = new OtpPassword
                 {
@@ -201,7 +201,7 @@
             }
             else
             {
-                var (otpPassword, remainingTime) = _otpService.CalculatePassword();
+                var (otpPassword, remainingTime) = OtpService.CalculatePassword();
                 _otpPassword = otpPassword;
                 _otpRemainingTime = remainingTime;
             }
