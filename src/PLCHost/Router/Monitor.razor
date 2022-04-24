@@ -85,8 +85,13 @@
 
             <MCol Cols="1"></MCol>
             <MCol>
-                <h3>OTP 密码 (剩余 @OtpRemainingTime 秒):</h3>
+                <h3>OTP 密码:</h3>
             </MCol>
+        </MRow>
+        <MRow>
+            <MProgressLinear Indeterminate="_otpRemainingTime < 0" Color="cyan" Height="25" Value="(_otpRemainingTime / 30.0) * 100">
+                <strong>@($"剩余 {OtpRemainingTime} 秒")</strong>
+            </MProgressLinear>
         </MRow>
         <MRow>
             <MCol Cols="2">
