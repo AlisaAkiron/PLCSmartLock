@@ -101,6 +101,12 @@ if (File.Exists(dbFile) is false)
 
 #endregion
 
+#region Initialize PLC
+
+var plc = app.Services.GetRequiredService<IPlcService>();
+
+#endregion
+
 #region Pipeline
 
 if (!app.Environment.IsDevelopment())

@@ -24,7 +24,7 @@ public static class QuartzJobExtension
                         schedule.WithIntervalInSeconds(1);
                         schedule.WithMisfireHandlingInstructionDoNothing();
                     })
-                    .StartNow();
+                    .StartAt(new DateTimeOffset(DateTime.Now).AddSeconds(3));
             }, job =>
             {
                 job.WithIdentity("PLC-HOST-OTP-JOB", "PLC-HOST-JOB-GROUP");

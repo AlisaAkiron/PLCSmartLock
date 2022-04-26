@@ -67,6 +67,10 @@
                             <MCardActions>
                                 <MSpacer></MSpacer>
                                 <MButton Color="primary"
+                                         OnClick="ChangePlcConnectionInfoCancelButtonClicked">
+                                    取消
+                                </MButton>
+                                <MButton Color="success"
                                          OnClick="ChangePlcConnectionInfoButtonClicked">
                                     确认
                                 </MButton>
@@ -156,5 +160,10 @@
 
         PlcService.SetPlcConnectionInfo(plcConnectionInfo);
         PlcService.Connect();
+    }
+
+    private void ChangePlcConnectionInfoCancelButtonClicked()
+    {
+        _dialog = false;
     }
 }

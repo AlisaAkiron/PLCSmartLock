@@ -154,7 +154,8 @@ public class PlcService : IPlcService
         }
 
         await WriteStaticPassword(staticPassword);
-        await _plc!.WriteClassAsync(new PlcWorkStatus { WorkStatus = 1 }, 9);
+        var workStatus = new PlcWorkStatus { WorkStatus = 1 };
+        await _plc!.WriteClassAsync(workStatus, 9);
         return true;
     }
 
