@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using PLCHost;
 using Serilog;
 
 #region Path
@@ -70,12 +71,13 @@ builder.Host.UseSerilog();
 
 builder.Configuration.AddConfiguration(configuration);
 
+builder.Services.AddHostedService<HostedService>();
 builder.Services.AddDbContext<PlcHostDbContext>();
 builder.Services.AddPlcHostServices();
+builder.Services.AddPlcHostJobs();
 builder.Services.AddMasaBlazor();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddPlcHostJobs();
 
 var app = builder.Build();
 
@@ -101,12 +103,6 @@ if (File.Exists(dbFile) is false)
 
 #endregion
 
-#region Initialize PLC
-
-var plc = app.Services.GetRequiredService<IPlcService>();
-
-#endregion
-
 #region Pipeline
 
 if (!app.Environment.IsDevelopment())
@@ -124,6 +120,6 @@ app.UseRouting();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
-app.Run();
+await app.RunAsync();
 
 #endregion

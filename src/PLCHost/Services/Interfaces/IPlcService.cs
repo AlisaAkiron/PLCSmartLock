@@ -6,21 +6,20 @@ public interface IPlcService
     /// 设置 PLC 连接信息，若已有一个连接，会先断开当前连接
     /// </summary>
     /// <param name="plcInfo"></param>
-    void SetPlcConnectionInfo(PlcInfo plcInfo);
+    Task SetPlcConnectionInfo(PlcInfo plcInfo);
     /// <summary>
     /// 获取 PLC 连接信息
     /// </summary>
     /// <returns></returns>
     PlcInfo? GetPlcConnectionInfo();
-
     /// <summary>
     /// 连接，返回 <see cref="GetPlcConnectionStatus"/> 的值
     /// </summary>
-    bool Connect();
+    Task<bool> Connect();
     /// <summary>
     /// 断开连接，返回 <see cref="GetPlcConnectionStatus"/> 的值取反
     /// </summary>
-    bool DisConnect();
+    Task<bool> DisConnect();
     /// <summary>
     /// 获取 PLC 连接状态
     /// </summary>

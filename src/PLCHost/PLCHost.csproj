@@ -3,6 +3,7 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+    <NoWarn>NU1701</NoWarn>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Masa.Blazor" Version="0.3.11407" />
@@ -13,7 +14,6 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.4" />
 		<PackageReference Include="Otp.NET" Version="1.2.2" />
 		<PackageReference Include="QRCoder" Version="1.4.3" />
-		<PackageReference Include="Quartz.AspNetCore" Version="3.4.0" />
 		<PackageReference Include="S7netplus" Version="0.13.0" />
 		<PackageReference Include="Serilog.AspNetCore" Version="5.0.0" />
 	</ItemGroup>

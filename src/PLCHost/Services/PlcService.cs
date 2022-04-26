@@ -35,21 +35,22 @@ public class PlcService : IPlcService
         }
 
         _plc = new Plc(plcInfo.CpuType.ToCpuType(), plcInfo.Ip, plcInfo.Rack, plcInfo.Slot);
-        Connect();
+        Connect().GetAwaiter().GetResult();
     }
 
     /// <inheritdoc />
-    public void SetPlcConnectionInfo(PlcInfo plcInfo)
+    public async Task SetPlcConnectionInfo(PlcInfo plcInfo)
     {
         _logger.LogInformation("Set up new PLC info");
         if (GetPlcConnectionStatus())
         {
             _logger.LogInformation("Change PLC info, disconnect from current instance");
-            DisConnect();
+            await DisConnect();
         }
+        Task.Delay(1000).GetAwaiter().GetResult();
         _plc = new Plc(plcInfo.CpuType.ToCpuType(), plcInfo.Ip!, plcInfo.Rack, plcInfo.Slot);
 
-        WriteDatabase(DbPersistKey.PlcInfo, JsonSerializer.Serialize(plcInfo)).Wait();
+        WriteDatabase(DbPersistKey.PlcInfo, JsonSerializer.Serialize(plcInfo)).GetAwaiter().GetResult();
     }
 
     /// <inheritdoc />
@@ -68,7 +69,7 @@ public class PlcService : IPlcService
     }
 
     /// <inheritdoc />
-    public bool Connect()
+    public async Task<bool> Connect()
     {
         if (_plc is null)
         {
@@ -80,7 +81,7 @@ public class PlcService : IPlcService
             try
             {
                 _isConnecting = true;
-                _plc.OpenAsync().GetAwaiter().GetResult();
+                await _plc.OpenAsync();
             }
             catch (Exception)
             {
@@ -95,7 +96,7 @@ public class PlcService : IPlcService
         if (GetPlcConnectionStatus())
         {
             _logger.LogInformation("PLC connected");
-            WriteOpenWorkStatus().Wait();
+            await WriteOpenWorkStatus();
 
             if (ReadOtpStatus().Result?.OtpEnabled != 1)
             {
@@ -114,13 +115,15 @@ public class PlcService : IPlcService
     }
 
     /// <inheritdoc />
-    public bool DisConnect()
+    public async Task<bool> DisConnect()
     {
         if (_plc?.IsConnected is true)
         {
             _logger.LogInformation("Start to disconnect to PLC");
-            WriteCloseWorkStatus().Wait();
+            var status = await WriteCloseWorkStatus();
+            _isConnecting = true;
             _plc.Close();
+            _isConnecting = false;
         }
 
         if (GetPlcConnectionStatus())
@@ -132,7 +135,7 @@ public class PlcService : IPlcService
             _logger.LogInformation("PLC disconnected");
         }
 
-        return !GetPlcConnectionStatus();
+        return GetPlcConnectionStatus();
     }
 
     /// <inheritdoc />
@@ -190,7 +193,8 @@ public class PlcService : IPlcService
         if (GetPlcConnectionStatus())
         {
             _logger.LogInformation("Write close work status to PLC");
-            await _plc!.WriteClassAsync(new PlcWorkStatus { WorkStatus = 0 }, 9);
+            var workStatus = new PlcWorkStatus { WorkStatus = 0 };
+            await _plc!.WriteClassAsync(workStatus, 9);
             return true;
         }
 
