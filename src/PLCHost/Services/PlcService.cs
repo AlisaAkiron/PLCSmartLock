@@ -7,13 +7,15 @@ namespace PLCHost.Services;
 public class PlcService : IPlcService
 {
     private Plc? _plc;
+    private readonly IOtpService _otpService;
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<PlcService> _logger;
     private bool _isConnecting;
 
-    public PlcService(IServiceScopeFactory scopeFactory, ILogger<PlcService> logger)
+    public PlcService(IOtpService otpService, IServiceScopeFactory scopeFactory, ILogger<PlcService> logger)
     {
         _isConnecting = false;
+        _otpService = otpService;
         _scopeFactory = scopeFactory;
         _logger = logger;
 
@@ -94,6 +96,14 @@ public class PlcService : IPlcService
         {
             _logger.LogInformation("PLC connected");
             WriteOpenWorkStatus().Wait();
+
+            if (ReadOtpStatus().Result?.OtpEnabled != 1)
+            {
+                return GetPlcConnectionStatus();
+            }
+
+            var key = ReadOtpKey().Result!.OtpKeyArray;
+            _otpService.SetOtpKey(key!);
         }
         else
         {
