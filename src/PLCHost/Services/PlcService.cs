@@ -9,9 +9,11 @@ public class PlcService : IPlcService
     private Plc? _plc;
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<PlcService> _logger;
+    private bool _isConnecting;
 
     public PlcService(IServiceScopeFactory scopeFactory, ILogger<PlcService> logger)
     {
+        _isConnecting = false;
         _scopeFactory = scopeFactory;
         _logger = logger;
 
@@ -66,16 +68,25 @@ public class PlcService : IPlcService
     /// <inheritdoc />
     public bool Connect()
     {
-        if (_plc?.IsConnected is false)
+        if (_plc is null)
+        {
+            return false;
+        }
+        if (_plc.IsConnected is false)
         {
             _logger.LogInformation("Start a PLC connection");
             try
             {
-                _plc.Open();
+                _isConnecting = true;
+                _plc.OpenAsync().GetAwaiter().GetResult();
             }
             catch (Exception)
             {
                 // Ignore
+            }
+            finally
+            {
+                _isConnecting = false;
             }
         }
 
@@ -117,6 +128,10 @@ public class PlcService : IPlcService
     /// <inheritdoc />
     public bool GetPlcConnectionStatus()
     {
+        if (_isConnecting)
+        {
+            return false;
+        }
         return _plc is not null && _plc.IsConnected;
     }
 

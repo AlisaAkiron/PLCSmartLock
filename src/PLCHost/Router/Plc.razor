@@ -28,56 +28,10 @@
     <MContainer Class="grid-center-items">
         <MRow Justify="JustifyTypes.Center">
             <MCol>
-                <MDialog @bind-Value="_dialog"
-                         Fullscreen
-                         Transition="dialog-bottom-transition">
-                    <ActivatorContent>
-                        <MButton Color="primary"
-                                 Attributes="@context.Attrs">
-                            修改 PLC 连接信息
-                        </MButton>
-                    </ActivatorContent>
-                    <ChildContent>
-                        <MCard>
-                            <MCardTitle></MCardTitle>
-                            <MCardText>
-                                <MContainer>
-                                    <ConfigurationRow Label="PLC IP">
-                                        <MTextField Label="IP"
-                                                    @bind-Value="_inputPlcIp"></MTextField>
-                                    </ConfigurationRow>
-                                    <ConfigurationRow Label="PLC CPU TYPE">
-                                        <MSelect @bind-Value="_inputPlcCpuType"
-                                                 Label="CPU TYPE"
-                                                 Items="_cpuTypeItems"
-                                                 ItemText="i => i.TypeString"
-                                                 ItemValue="i => i.Type"
-                                                 MenuProps="props => props.OffsetY = true"></MSelect>
-                                    </ConfigurationRow>
-                                    <ConfigurationRow Label="PLC RACK">
-                                        <MTextField Label="RACK"
-                                                    @bind-Value="_inputPlcRack"></MTextField>
-                                    </ConfigurationRow>
-                                    <ConfigurationRow Label="PLC SLOT">
-                                        <MTextField Label="SLOT"
-                                                    @bind-Value="_inputPlcSlot"></MTextField>
-                                    </ConfigurationRow>
-                                </MContainer>
-                            </MCardText>
-                            <MCardActions>
-                                <MSpacer></MSpacer>
-                                <MButton Color="primary"
-                                         OnClick="ChangePlcConnectionInfoCancelButtonClicked">
-                                    取消
-                                </MButton>
-                                <MButton Color="success"
-                                         OnClick="ChangePlcConnectionInfoButtonClicked">
-                                    确认
-                                </MButton>
-                            </MCardActions>
-                        </MCard>
-                    </ChildContent>
-                </MDialog>
+                <MButton Color="primary"
+                         OnClick="ChangeInfoButtonClicked">
+                    修改 PLC 连接信息
+                </MButton>
             </MCol>
             <MCol>
                 <MButton Color="success"
@@ -92,6 +46,58 @@
         </MRow>
     </MContainer>
 
+    <MContainer>
+        <MRow Justify="JustifyTypes.Center">
+            <MDialog @bind-Value="_dialog"
+                     Transition="slide-y-reverse-transition"
+                     Fullscreen>
+                <ChildContent>
+                    <MCard>
+                        <MCardTitle>
+                            修改 PLC 连接信息
+                        </MCardTitle>
+                        <MCardText>
+                            <MContainer>
+                                <ConfigurationRow Label="PLC IP">
+                                    <MTextField Label="IP"
+                                                @bind-Value="_inputPlcIp"></MTextField>
+                                </ConfigurationRow>
+                                <ConfigurationRow Label="PLC CPU TYPE">
+                                    <MSelect @bind-Value="_inputPlcCpuType"
+                                             Label="CPU TYPE"
+                                             Items="_cpuTypeItems"
+                                             ItemText="i => i.TypeString"
+                                             ItemValue="i => i.Type"
+                                             MenuProps="props => props.OffsetY = true"></MSelect>
+                                </ConfigurationRow>
+                                <ConfigurationRow Label="PLC RACK">
+                                    <MTextField Label="RACK"
+                                                @bind-Value="_inputPlcRack"></MTextField>
+                                </ConfigurationRow>
+                                <ConfigurationRow Label="PLC SLOT">
+                                    <MTextField Label="SLOT"
+                                                @bind-Value="_inputPlcSlot"></MTextField>
+                                </ConfigurationRow>
+                            </MContainer>
+                        </MCardText>
+                        <MCardActions>
+                            <MSpacer></MSpacer>
+                            <MButton Color="primary"
+                                     OnClick="ChangePlcConnectionInfoCancelButtonClicked"
+                                     Large>
+                                取消
+                            </MButton>
+                            <MButton Color="success"
+                                     OnClick="ChangePlcConnectionInfoButtonClicked"
+                                     Large>
+                                确认
+                            </MButton>
+                        </MCardActions>
+                    </MCard>
+                </ChildContent>
+            </MDialog>
+        </MRow>
+    </MContainer>
 </div>
 
 @code {
@@ -147,8 +153,15 @@
         StatusRefreshButtonClicked();
     }
 
+    private void ChangeInfoButtonClicked()
+    {
+        _dialog = true;
+    }
+
     private void ChangePlcConnectionInfoButtonClicked()
     {
+        _dialog = false;
+
         var plcConnectionInfo = new PlcInfo
         {
             CpuType = _inputPlcCpuType,
@@ -156,10 +169,11 @@
             Rack = _inputPlcRack,
             Slot = _inputPlcSlot
         };
-        _dialog = false;
 
         PlcService.SetPlcConnectionInfo(plcConnectionInfo);
         PlcService.Connect();
+
+        StatusRefreshButtonClicked();
     }
 
     private void ChangePlcConnectionInfoCancelButtonClicked()
