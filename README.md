@@ -28,3 +28,9 @@ PLC 程序在 TIA Portal 中打印为 [src/PLCSmartLock.pdf](src/PLCSmartLock.pd
 
 开发环境
 - .NET SDK 6.0.x
+
+
+## 许可证
+
+本仓库使用 [DO WHAT THE F**K YOU WANT TO PUBLIC LICENSE(WTFPL, 
+你TM爱干啥干啥)](./LICENSE) 许可证授权
