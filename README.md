@@ -2,6 +2,10 @@
 
 ## PLC
 
+PLC 程序打包为 [src/PLCSmartLock.zip](src/PLCSmartLock.zip)
+
+PLC 程序在 TIA Portal 中打印为 [src/PLCSmartLock.pdf](src/PLCSmartLock.pdf)
+
 开发环境
 - Siemens TIA Portal V16
 
@@ -15,6 +19,9 @@
 - 数字量输出： Q0.0 - Q0.7
 
 ## 上位机
+
+上位机程序在 [src/PLCHost](src/PLCHost)
+请直接打开解决方案 [PLCSmartLock.sln](PLCSmartLock.sln)
 
 运行环境
 - ASP.NET Core 6.0 Runtime
