@@ -120,7 +120,7 @@ public class PlcService : IPlcService
         if (_plc?.IsConnected is true)
         {
             _logger.LogInformation("Start to disconnect to PLC");
-            var status = await WriteCloseWorkStatus();
+            await WriteCloseWorkStatus();
             _isConnecting = true;
             _plc.Close();
             _isConnecting = false;
@@ -179,6 +179,10 @@ public class PlcService : IPlcService
                 StaticPasswordAnalogHigh = (ushort)rnd.Next(50000, 60000),
                 StaticPasswordAnalogLow = (ushort)rnd.Next(10000, 20000)
             };
+            _logger.LogWarning("PLC set up with static password, {S1}{S2}{S3}{S4}{S5}{S6} and {AL} - {AH}",
+                staticPassword.StaticPassword1, staticPassword.StaticPassword2, staticPassword.StaticPassword3,
+                staticPassword.StaticPassword4, staticPassword.StaticPassword5, staticPassword.StaticPassword6,
+                staticPassword.StaticPasswordAnalogLow, staticPassword.StaticPasswordAnalogHigh);
         }
 
         await WriteStaticPassword(staticPassword);
